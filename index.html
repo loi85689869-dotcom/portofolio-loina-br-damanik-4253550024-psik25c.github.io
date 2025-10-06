@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portofolio Loina Damanik | Ilmu Komputer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root {
+            --primary: #8A2BE2;
+            --secondary: #FF6B8B;
+            --accent: #00CED1;
+            --dark: #2D3047;
+            --light: #FFFFFF;
+            --gradient: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent));
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #2D3047 0%, #1A1C2D 100%);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 3D Background */
+        #threejs-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        /* Header & Navigation */
+        header {
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(45, 48, 71, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        header.scrolled {
+            padding: 15px 0;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--light);
+            text-decoration: none;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-menu li {
+            margin-left: 30px;
+        }
+        
+        .nav-menu a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding: 5px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-menu a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background: var(--gradient);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-menu a:hover:after,
+        .nav-menu a.active:after {
+            width: 100%;
+        }
+        
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+        
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: var(--light);
+            margin: 2px 0;
+            transition: all 0.3s ease;
+        }
+        
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-content {
+            max-width: 650px;
+            z-index: 1;
+            transform: translateY(50px);
+            opacity: 0;
+            animation: fadeUp 1s ease forwards 0.5s;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero h2 {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: var(--accent);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: var(--gradient);
+            color: var(--light);
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(138, 43, 226, 0.4);
+        }
+        
+        /* Sections */
+        section {
+            padding: 100px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 3px;
+            background: var(--gradient);
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        /* About Section */
+        .about-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .about-text {
+            flex: 1;
+            min-width: 300px;
+            padding-right: 40px;
+        }
+        
+        .about-image {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+            perspective: 1000px;
+            display: flex; 
+            justify-content: center; 
+            gap: 20px; 
+            flex-wrap: wrap; 
+        }
+        
+        .image-container {
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+            flex-shrink: 0; 
+        }
+        
+        .image-container:hover {
+            transform: rotateY(20deg) rotateX(10deg);
+        }
+        
+        .about-image img {
+            width: 100%;
+            max-width: 300px; 
+            height: auto; 
+            display: block; 
+            border-radius: 10px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transition: all 0.5s ease;
+        }
+
+        /* Menghapus gaya untuk foto tambahan karena hanya 1 foto yang digunakan */
+        
+        .about-image:hover img {
+            transform: scale(1.05);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+        }
+        
+        /* Education Section */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .timeline:before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            width: 2px;
+            height: 100%;
+            background: var(--gradient);
+            transform: translateX(-50%);
+        }
+        
+        .timeline-item {
+            padding: 20px 0;
+            position: relative;
+            width: 50%;
+            transform: translateY(50px);
+            opacity: 0;
+        }
+        
+        .timeline-item:nth-child(odd) {
+            left: 0;
+            padding-right: 50px;
+            text-align: right;
+        }
+        
+        .timeline-item:nth-child(even) {
+            left: 50%;
+            padding-left: 50px;
+        }
+        
+        .timeline-content {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .timeline-content:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .timeline-item:before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--gradient);
+            top: 30px;
+        }
+        
+        .timeline-item:nth-child(odd):before {
+            right: -10px;
+        }
+        
+        .timeline-item:nth-child(even):before {
+            left: -10px;
+        }
+        
+        /* Hobbies Section */
+        .hobbies-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .hobby-card {
+            width: 250px;
+            height: 300px;
+            perspective: 1000px;
+        }
+        
+        .hobby-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+        
+        .hobby-card:hover .hobby-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .hobby-front, .hobby-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .hobby-front {
+            background: var(--gradient);
+            color: white;
+        }
+        
+        .hobby-back {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            transform: rotateY(180deg);
+            color: white;
+        }
+        
+        .hobby-icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+        }
+        
+        /* Goals Section */
+        .goals-content {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: translateY(50px);
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+        
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 30px 0;
+            text-align: center;
+        }
+        
+        .social-icons {
+            margin-bottom: 20px;
+        }
+        
+        .social-icons a {
+            display: inline-block;
+            margin: 0 15px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: var(--light);
+            line-height: 40px;
+            transition: all 0.3s ease;
+        }
+        
+        .social-icons a:hover {
+            background: var(--gradient);
+            transform: translateY(-5px);
+        }
+        
+        /* Animations */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        .animated {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+        }
+        
+        .animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+            
+            .about-content {
+                flex-direction: column;
+            }
+            
+            .about-text {
+                padding-right: 0;
+                margin-bottom: 40px;
+            }
+            
+            .timeline:before {
+                left: 30px;
+            }
+            
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 0;
+                text-align: left;
+            }
+            
+            .timeline-item:nth-child(odd) {
+                padding-right: 0;
+                text-align: left;
+            }
+            
+            .timeline-item:nth-child(even) {
+                left: 0;
+            }
+            
+            .timeline-item:before {
+                left: 20px;
+            }
+            
+            .timeline-item:nth-child(odd):before {
+                right: auto;
+                left: 20px;
+            }
+            /* Penyesuaian gambar di about section untuk layar kecil */
+            .about-image {
+                flex-direction: column;
+                align-items: center;
+            }
+            .about-image img {
+                margin: 10px 0; /* Jarak vertikal antar gambar */
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-menu {
+                position: fixed;
+                top: 70px;
+                right: -100%;
+                background: rgba(45, 48, 71, 0.95);
+                width: 250px;
+                height: 100vh;
+                flex-direction: column;
+                padding: 40px 20px;
+                transition: all 0.5s ease;
+                backdrop-filter: blur(10px);
+            }
+            
+            .nav-menu.active {
+                right: 0;
+            }
+            
+            .nav-menu li {
+                margin: 15px 0;
+            }
+            
+            .hamburger {
+                display: flex;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero h2 {
+                font-size: 1.5rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="threejs-background"></div>
+    
+    <header>
+        <div class="container nav-container">
+            <a href="#" class="logo">LOINA DAMANIK</a>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="active">Home</a></li>
+                <li><a href="#about">Tentang</a></li>
+                <li><a href="#education">Pendidikan</a></li>
+                <li><a href="#hobbies">Hobi</a></li>
+                <li><a href="#contact">Kontak</a></li>
+            </ul>
+        </div>
+    </header>
+    
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Loina Damanik</h1>
+                <h2>Calon Dosen Ilmu Komputer</h2>
+                <p>Selamat datang di portofolio saya! Saya adalah mahasiswa Ilmu Komputer UNIMED, bersemangat dalam logika pemrograman dan bercita-cita menjadi dosen yang menginspirasi.</p>
+                <a href="#about" class="btn">Jelajahi Lebih Lanjut</a>
+            </div>
+        </div>
+    </section>
+    
+    <section id="about" class="about">
+        <div class="container">
+            <div class="section-title">
+                <h2>Tentang Saya</h2>
+            </div>
+            <div class="about-content">
+                <div class="about-text animated">
+                    <p>Saya <strong>Loina Damanik</strong>, seorang yang memiliki minat besar di bidang <strong>Matematika dan Ilmu Komputer</strong>. Saat ini saya berdomisili di <strong>Jalan Jalur Hijau 08</strong>.</p>
+                    <p>Cita-cita saya adalah menjadi <strong>Dosen Ilmu Komputer</strong> agar dapat berkontribusi dalam pengembangan sumber daya manusia di era digital. Meskipun tidak memiliki prestasi formal, semangat belajar saya sangat tinggi.</p>
+                    <p>Saya percaya bahwa pemahaman yang kuat terhadap algoritma dan struktur data adalah kunci untuk menciptakan solusi teknologi yang inovatif.</p>
+                </div>
+                <div class="about-image animated">
+                    <div class="image-container">
+                        <img src="fotoguwe.jpg" alt="Foto Profil Loina Damanik"> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="education" class="education">
+        <div class="container">
+            <div class="section-title">
+                <h2>Riwayat Pendidikan</h2>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item animated">
+                    <div class="timeline-content">
+                        <h3>Universitas Negeri Medan (UNIMED)</h3>
+                        <p>Jurusan Matematika, Prodi **Ilmu Komputer**.</p>
+                    </div>
+                </div>
+                <div class="timeline-item animated">
+                    <div class="timeline-content">
+                        <h3>SMK Negeri 1 Lubuk Pakam</h3>
+                        <p>Pendidikan Kejuruan di salah satu sekolah terbaik di Lubuk Pakam.</p>
+                    </div>
+                </div>
+                <div class="timeline-item animated">
+                    <div class="timeline-content">
+                        <h3>SMP Negeri 1 Galang</h3>
+                        <p>Pendidikan menengah pertama di SMP Negeri 1 Galang.</p>
+                    </div>
+                </div>
+                <div class="timeline-item animated">
+                    <div class="timeline-content">
+                        <h3>SD 10 6199 Kotasan</h3>
+                        <p>Pendidikan dasar saya di SD 10 6199 Kotasan.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="hobbies" class="hobbies">
+        <div class="container">
+            <div class="section-title">
+                <h2>Hobi, Minat, dan yang akan di kembangkan</h2>
+            </div>
+            <div class="hobbies-container">
+                <div class="hobby-card animated">
+                    <div class="hobby-inner">
+                        <div class="hobby-front">
+                            <div class="hobby-icon">
+                                <i class="fas fa-microphone"></i>
+                            </div>
+                            <h3>Bernyanyi</h3>
+                        </div>
+                        <div class="hobby-back">
+                            <p>Bernyanyi membantu saya mengekspresikan diri dan mengurangi stres, menjaga keseimbangan mental untuk studi yang intens.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="hobby-card animated">
+                    <div class="hobby-inner">
+                        <div class="hobby-front">
+                            <div class="hobby-icon">
+                                <i class="fas fa-gamepad"></i>
+                            </div>
+                            <h3>Bermain Game</h3>
+                        </div>
+                        <div class="hobby-back">
+                            <p>Bermain game adalah cara saya mengasah kemampuan strategi, kesabaran, dan analisis dalam waktu luang.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="hobby-card animated">
+                    <div class="hobby-inner">
+                        <div class="hobby-front">
+                            <div class="hobby-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <h3>Pemrograman</h3>
+                        </div>
+                        <div class="hobby-back">
+                            <p>Bukan sekedar studi Saya ingin mengembangkan pemrograman saya dan menikmati proses memecahkan masalah dengan logika dan kode</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="contact" class="goals">
+        <div class="container">
+            <div class="section-title">
+                <h2>Kontak & Cita-Cita</h2>
+            </div>
+            <div class="goals-content animated">
+                <h3>Cita-Cita Utama: Dosen Ilmu Komputer</h3>
+                <p>Saya bercita-cita menjadi dosen yang menginspirasi dalam bidang Ilmu Komputer, membagikan pengetahuan dan pengalaman yang saya miliki.</p>
+                <p>Untuk urusan kontak, mohon perhatikan informasi berikut:</p>
+                <p><i class="fas fa-map-marker-alt"></i> **Domisili Saat Ini:** Jalan Jalur Hijau 08</p>
+                <p><i class="fas fa-home"></i> **Alamat Lengkap:** Galang Jaharun B Juhar Baru</p>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#"><i class="fab fa-github"></i></a>
+            </div>
+            <p>&copy; 2025 Loina Damanik Portofolio. Dibuat untuk Project Tugas.</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Three.js 3D Background
+        function initThreeJS() {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('threejs-background').appendChild(renderer.domElement);
+            
+            // Create particles
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 2000;
+            
+            const posArray = new Float32Array(particlesCount * 3);
+            const colorArray = new Float32Array(particlesCount * 3);
+            
+            for (let i = 0; i < particlesCount * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 10;
+                colorArray[i] = Math.random();
+            }
+            
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
+            
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.05,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8
+            });
+            
+            const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particlesMesh);
+            
+            camera.position.z = 5;
+            
+            // Animation
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                particlesMesh.rotation.x += 0.0005;
+                particlesMesh.rotation.y += 0.001;
+                
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+        
+        // Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize 3D background
+            initThreeJS();
+            
+            // Hamburger menu toggle
+            const hamburger = document.querySelector('.hamburger');
+            const navMenu = document.querySelector('.nav-menu');
+            
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
+            
+            // Close menu when clicking on a link
+            document.querySelectorAll('.nav-menu a').forEach(link => {
+                link.addEventListener('click', () => {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                });
+            });
+            
+            // Header scroll effect
+            const header = document.querySelector('header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+            
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // Scroll animation
+            const animatedElements = document.querySelectorAll('.animated');
+            
+            function checkScroll() {
+                animatedElements.forEach(element => {
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const screenPosition = window.innerHeight / 1.3;
+                    
+                    if (elementPosition < screenPosition) {
+                        element.classList.add('animate');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', checkScroll);
+            checkScroll(); // Check on initial load
+            
+            // Timeline animation
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            
+            function checkTimeline() {
+                timelineItems.forEach((item, index) => {
+                    const itemPosition = item.getBoundingClientRect().top;
+                    const screenPosition = window.innerHeight / 1.3;
+                    
+                    if (itemPosition < screenPosition) {
+                        setTimeout(() => {
+                            item.style.opacity = 1;
+                            item.style.transform = 'translateY(0)';
+                        }, index * 200);
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', checkTimeline);
+            checkTimeline(); // Check on initial load
+        });
+    </script>
+</body>
+</html>
